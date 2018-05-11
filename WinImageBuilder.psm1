@@ -380,7 +380,8 @@ function Download-CloudbaseInit {
     $CloudbaseInitMsiUrl = "https://www.cloudbase.it/downloads/$CloudbaseInitMsi"
 
     Execute-Retry {
-        (New-Object System.Net.WebClient).DownloadFile($CloudbaseInitMsiUrl, $CloudbaseInitMsiPath)
+        #(New-Object System.Net.WebClient).DownloadFile($CloudbaseInitMsiUrl, $CloudbaseInitMsiPath)
+        Copy-Item -Recurse "D:\images\CloudbaseInitSetup_x64.msi" $CloudbaseInitMsiPath
     }
 }
 

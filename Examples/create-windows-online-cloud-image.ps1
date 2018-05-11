@@ -29,7 +29,8 @@ $VirtIOISOPath = "C:\images\virtio.iso"
 $virtIODownloadLink = "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.133-2/virtio-win.iso"
 
 # Download the VirtIO drivers ISO from Fedora
-(New-Object System.Net.WebClient).DownloadFile($virtIODownloadLink, $VirtIOISOPath)
+#(New-Object System.Net.WebClient).DownloadFile($virtIODownloadLink, $VirtIOISOPath)
+Copy-Item -Recurse "D:\images\virtio-win-0.1.133.iso" $VirtIOISOPath
 
 # Extra drivers path contains the drivers for the baremetal nodes
 # Examples: Chelsio NIC Drivers, Mellanox NIC drivers, LSI SAS drivers, etc.
