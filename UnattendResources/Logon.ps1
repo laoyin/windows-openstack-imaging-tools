@@ -267,9 +267,13 @@ try
     $MaasConfigPath = "$programFilesDir\Cloudbase Solutions\Cloudbase-Init\conf\cloudbase-init.conf"
     $MaasHost = Get-IniFileValue -Path $MaasConfigPath -Section "DEFAULT" -Key "maas_metadata_url"
 
-    ExecRetry {
+    try{
+        ExecRetry {
         Write-Output  "begin test internet connected, or IP address valid"
         CheckMaasHostConnect -MAASHOST $MaasHost
+        }
+    }catch{
+        Write-Output "first test"
     }
     # end yinxingpan
 
