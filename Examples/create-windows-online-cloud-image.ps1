@@ -48,8 +48,8 @@ $switchName = 'external'
 New-WindowsOnlineImage -WimFilePath $wimFilePath -ImageName $image.ImageName `
     -WindowsImagePath $windowsImagePath -Type 'MAAS' -ExtraFeatures @() `
     -SizeBytes 30GB -CpuCores 4 -Memory 4GB -SwitchName $switchName `
-    -ProductKey $productKey -DiskLayout 'BIOS' -VirtioISOPath $virtIOISOPath `
+    -ProductKey $productKey -DiskLayout 'UEFI' -VirtioISOPath $virtIOISOPath `
     -ExtraDriversPath $extraDriversPath `
-    -InstallUpdates:$true -AdministratorPassword 'Pa$$w0rd' `
+    -InstallUpdates:$false -AdministratorPassword 'Pa$$w0rd' `
     -PurgeUpdates:$true -DisableSwap:$true
 
