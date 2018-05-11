@@ -114,6 +114,15 @@ function Release-IP {
         }
 }
 
+function Renew-IP{
+    $HOST.UI.RawUI.WindowTitle = "Renew IP..."
+    ipconfig.exe /renew
+    if ($LASTEXITCODE) {
+            throw "IPconfig Renew IP failed"
+        }
+
+}
+
 function Install-WindowsUpdates {
     Import-Module "$resourcesDir\WindowsUpdates\WindowsUpdates"
     $BaseOSKernelVersion = [System.Environment]::OSVersion.Version
@@ -182,6 +191,35 @@ function Disable-Swap {
     }
 }
 
+
+function CheckMaasHostConnect{
+
+    Param(
+    [parameter(Mandatory=$true)]
+    [string]$MAASHOST
+    )
+    if (!$MAASHOST) {
+        return $false
+    }
+
+    try{
+        Invoke-WebRequest -Uri $MAASHOST
+    }catch [System.Net.WebException]
+    {
+        $statusCode = [int]$_.Exception.Response.StatusCode
+        Write-Output $statusCode
+        if($statusCode -ne 401){
+            Renew-IP
+            throw "can not connect maas server, try it again"
+        }else{
+            $html = $_.Exception.Response.StatusDescription
+            Write-Output "that is ok, 401"
+
+        }
+    }
+
+}
+
 try
 {
     Import-Module "$resourcesDir\ini.psm1"
@@ -223,6 +261,19 @@ try
 
     $Host.UI.RawUI.WindowTitle = "Running Sysprep..."
     $unattendedXmlPath = "$programFilesDir\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
+
+    # try to connect the maas host, if it can not connect to maas server, try it again, ipconfig /renew
+    # yinxingpan
+    $MaasConfigPath = "$programFilesDir\Cloudbase Solutions\Cloudbase-Init\conf\cloudbase-init.conf"
+    $MaasHost = Get-IniFileValue -Path $MaasConfigPath -Section "DEFAULT" -Key "maas_metadata_url"
+
+    ExecRetry {
+        Write-Output  "begin test internet connected, or IP address valid"
+        CheckMaasHostConnect -MAASHOST $MaasHost
+    }
+    # end yinxingpan
+
+
     Set-PersistDrivers -Path $unattendedXmlPath -Persist:$persistDrivers
 
     if ($disableSwap) {
